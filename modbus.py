@@ -16,7 +16,7 @@ class ModbusClient():
     def read(self, tags, q:Queue, e:Event):
         """
         tags: dict() of values to append
-        q:Queue threaded measurement queue
+        q:Queue status queue for UI
         e:Event close/abort event
         """
         #Loop through all meters
