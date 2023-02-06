@@ -14,16 +14,25 @@ class ModbusClient():
         self.status = 'init'
 
     def read(self, tags, q:Queue, e:Event):
+        """
+        tags: dict() of values to append
+        q:Queue threaded measurement queue
+        e:Event close/abort event
+        """
         #Loop through all meters
         i = 0
         num_meters = len(self.meters)
         for meter in self.meters:
+            if e.is_set():
+                break
+
             #Connect
             meterIP = meter["ip"]
             client = ModbusTcpClient(meterIP)
             q.put("m|"+ progressString(percent=int(i/num_meters), width=40, name = "Reading"))
             i += 1
-            client.connect()
+            client.connect()    
+
             #Get information about meter
             items = list(meter['values'].keys())
             uuid = meter['uuid']
@@ -31,7 +40,9 @@ class ModbusClient():
             slave_id = meter['id']
             meter_tags = dict()
             
-            for item in items: #For all registers read requests in "values"
+            for item in items: #For all register read requests in "values"
+                if e.is_set():
+                    break
                 #Get info
                 regtype = meter['values'][item]['registerType']
                 reg = meter['values'][item]['register']
@@ -106,6 +117,8 @@ class ModbusClient():
                     self.error[meterIP] = str(E)
                     break
             client.close()
+            if e.is_set():
+                break
             meter_tags['measure_name'] = measure_name
             tags[uuid] = meter_tags
         self.health = len(list(self.error.keys())) #Update health as number of errors

@@ -1,0 +1,23 @@
+{
+    "enable": true,
+    "delay": 5,
+    "meters": [
+        {
+            "uuid": "ADD UUID FROM EURORA",
+            "type": "electrical",
+            "ip": "192.168.100.69",
+            "id": 1,
+            "values": {
+                "act_energy_p": {
+                    "register": 1,
+                    "size": 1,
+                    "scale": 1,
+                    "registerType": "input",
+                    "type": "16int",
+                    "byteorder": "big",
+                    "wordorder": "big"
+                }
+            }
+        }
+    ]
+}
